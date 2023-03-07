@@ -51,20 +51,23 @@ def predict(
     openai_api_key: str,
     chatbot: list = [],
     history: list = [],
-):  # repetition_penalty, top_k
+):
+    global total_tokens
     openai.api_key = openai_api_key
     messages.append({"role": "user", "content": inputs})
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=messages,
         temperature=temperature,
+        max_tokens=2048,
     )
     message = response["choices"][0]["message"]["content"]
-    print(message)
     messages.append({"role": "assistant", "content": message})
     total_tokens += response["usage"]["total_tokens"]
     history.append(inputs)
-    chatbot = [(history[i], history[i + 1]) for i in range(len(history) - 1, 2)]
+    history.append(message)
+    chatbot = [(history[i], history[i + 1]) for i in range(0, len(history), 2)]
+    # chatbot = [(m["role"], m["content"]) for m in messages]
 
     return chatbot, history
 
@@ -85,9 +88,7 @@ with gr.Blocks(
             type="password", label="Enter your OpenAI API key here"
         )
         chatbot = gr.Chatbot(elem_id="chatbot")
-        inputs = gr.Textbox(
-            placeholder="Hola!", label="Escribe tu pregunta y presiona Enter"
-        )  # t
+        inputs = gr.Textbox(placeholder="Escribe tu pregunta y presiona Run", label="")
         state = gr.State([])
         b1 = gr.Button()
 
@@ -101,7 +102,6 @@ with gr.Blocks(
                 label="Temperature",
             )
             chat_counter = gr.Number(value=0, visible=False, precision=0)
-
     inputs.submit(
         predict,
         [inputs, temperature, openai_api_key, chatbot, state],
