@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "gradio-chat-gpt"
+version = "0.1.0"
+description = ""
+authors = ["yerson <yersonargote@unicauca.edu.co>"]
+readme = "README.md"
+packages = [{include = "gradio_chat_gpt"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+gradio = "^3.20.1"
+openai = "^0.27.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
