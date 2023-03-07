@@ -26,7 +26,23 @@ Al final de la conversación, responderé con "¡Vamos a aprender juntos!"""
 
 total_tokens: float = 0
 
-messages = [{"role": "system", "content": system}]
+messages: list = [
+    {"role": "system", "content": system},
+    {
+        "role": "assistant",
+        "content": """¡Hola! Soy Maria, una inteligencia artificial diseñada para 
+ayudarte a aprender los conceptos básicos y fundamentos de  
+la programación.""",
+    },
+    {
+        "role": "user",
+        "content": "Hola! Soy un estudiante de programación, me puedes ayudar a aprender.",
+    },
+    {
+        "role": "assistant",
+        "content": "¡Por supuesto!. ¿Cómo puedo ayudarte hoy?",
+    },
+]
 
 
 def predict(
@@ -43,13 +59,14 @@ def predict(
         messages=messages,
         temperature=temperature,
     )
-
-    message = response.choices[0].message.content
+    message = response["choices"][0]["message"]["content"]
+    print(message)
     messages.append({"role": "assistant", "content": message})
     total_tokens += response["usage"]["total_tokens"]
-    chatbot = messages
-    history = history
-    yield chatbot, history
+    history.append(inputs)
+    chatbot = [(history[i], history[i + 1]) for i in range(len(history) - 1, 2)]
+
+    return chatbot, history
 
 
 def reset_textbox():
