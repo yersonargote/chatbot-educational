@@ -115,4 +115,4 @@ with gr.Blocks(
     b1.click(reset_textbox, [], [inputs])
     inputs.submit(reset_textbox, [], [inputs])
 
-    ui.queue().launch(debug=True)
+    ui.queue().launch(debug=True)  # share=True
